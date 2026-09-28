@@ -1,0 +1,93 @@
+/*
+ * BESS Doku — animations.css
+ * Todas as animações são curtas e aditivas (classes removidas ao final),
+ * nunca bloqueiam input. Respeitam prefers-reduced-motion (ver layout.css).
+ */
+
+@keyframes bd-fade-slide-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bd-toast-in {
+  from { opacity: 0; transform: translateY(12px) scale(.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes bd-toast-out {
+  from { opacity: 1; }
+  to { opacity: 0; transform: translateY(-6px); }
+}
+
+@keyframes bd-pop-in {
+  0% { transform: scale(.3); opacity: 0; }
+  60% { transform: scale(1.14); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+@keyframes bd-shake-error {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(3px); }
+}
+
+@keyframes bd-region-glow {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes bd-hint-pulse {
+  0%, 100% { box-shadow: inset 0 0 0 3px var(--color-gold); }
+  50% { box-shadow: inset 0 0 0 6px var(--color-gold); }
+}
+
+@keyframes bd-tail-wag {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(14deg); }
+}
+
+@keyframes bd-mascot-bounce {
+  0% { transform: scale(1) translateY(0); }
+  30% { transform: scale(1.08) translateY(-10px); }
+  55% { transform: scale(0.97) translateY(0); }
+  75% { transform: scale(1.03) translateY(-4px); }
+  100% { transform: scale(1) translateY(0); }
+}
+
+/* ---------- Confete ---------- */
+#confetti-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 80;
+}
+.confetti-piece {
+  position: absolute;
+  top: -12px;
+  width: 8px;
+  height: 14px;
+  border-radius: 2px;
+  opacity: .95;
+  animation-name: bd-confetti-fall;
+  animation-timing-function: cubic-bezier(.4, .6, .6, 1);
+  animation-fill-mode: forwards;
+}
+@keyframes bd-confetti-fall {
+  0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+  85% { opacity: 1; }
+  100% { transform: translateY(105vh) rotate(420deg); opacity: 0; }
+}
+
+.screen-fade-out { animation: bd-fade-slide-out .2s var(--ease-standard); }
+@keyframes bd-fade-slide-out {
+  from { opacity: 1; }
+  to { opacity: 0; transform: translateY(-6px); }
+}
+
+@keyframes bd-penalty-pop {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.18); }
+  100% { transform: scale(1); }
+}

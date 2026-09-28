@@ -1,0 +1,17 @@
+{
+  "name": "BESS Doku",
+  "short_name": "BESS Doku",
+  "lang": "pt-BR",
+  "description": "BESS Doku — o puzzle de lógica do Lulu da Pomerânia. Jogue Solo, dispute o Duelo local ou o Desafio Diário.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#FAFAFA",
+  "theme_color": "#17171B",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

@@ -1,0 +1,100 @@
+/*
+ * BESS Doku — board.css
+ * Tabuleiro do puzzle: grade de regiões coloridas, células e seus estados.
+ */
+.board-wrap {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-2) 0;
+}
+
+.board {
+  --n: 6;
+  display: grid;
+  grid-template-columns: repeat(var(--n), 1fr);
+  grid-template-rows: repeat(var(--n), 1fr);
+  width: min(92vw, 460px);
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  background: var(--color-black);
+  gap: 0;
+}
+
+@media (min-width: 900px) {
+  .board { width: min(60vw, 480px); }
+}
+
+.cell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--region-0);
+  border: 0 solid var(--region-border);
+  cursor: pointer;
+  transition: filter .1s;
+  min-width: 0;
+  min-height: 0;
+  /* A célula trata seus próprios gestos (toque simples/duplo); impede o
+     navegador de tentar rolar/dar zoom durante um arraste sobre o tabuleiro. */
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.cell:active { filter: brightness(0.94); }
+
+.cell--r0 { background: var(--region-0); }
+.cell--r1 { background: var(--region-1); }
+.cell--r2 { background: var(--region-2); }
+.cell--r3 { background: var(--region-3); }
+.cell--r4 { background: var(--region-4); }
+.cell--r5 { background: var(--region-5); }
+.cell--r6 { background: var(--region-6); }
+.cell--r7 { background: var(--region-7); }
+.cell--r8 { background: var(--region-8); }
+.cell--r9 { background: var(--region-9); }
+.cell--r10 { background: var(--region-10); }
+.cell--r11 { background: var(--region-11); }
+
+.cell__mascot {
+  width: 76%;
+  height: 76%;
+  pointer-events: none;
+  /* Halo claro + sombra: separa o personagem (preto, caramelo ou humano) da
+     cor da região, qualquer que seja ela. */
+  filter: drop-shadow(0 0 1.5px rgba(255, 255, 255, 0.95)) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.45));
+}
+
+.cell__x {
+  font-weight: 800;
+  font-size: clamp(16px, 4.4vw, 24px);
+  color: rgba(255, 255, 255, 0.96);
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.7), 0 1px 3px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+  user-select: none;
+}
+
+.cell--hint {
+  box-shadow: inset 0 0 0 3px var(--color-gold);
+  animation: bd-hint-pulse 1s ease-in-out infinite;
+}
+
+.cell--error {
+  animation: bd-shake-error .35s var(--ease-standard);
+}
+
+.cell--just-placed .cell__mascot {
+  animation: bd-pop-in .28s var(--ease-standard);
+}
+
+.cell--region-complete::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 0 3px var(--color-success);
+  border-radius: 2px;
+  animation: bd-region-glow .6s ease-out forwards;
+  pointer-events: none;
+}

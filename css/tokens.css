@@ -1,0 +1,92 @@
+/*
+ * BESS Doku — tokens.css
+ * Identidade visual: preto / branco / vermelho / cinza para a interface,
+ * paleta pastel dessaturada apenas para as regiões do tabuleiro.
+ */
+:root {
+  /* Base */
+  --color-bg: #FAFAFA;
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #F0F0F2;
+  --color-text-primary: #1A1A1E;
+  --color-text-secondary: #6B6B72;
+  --color-text-on-dark: #FAFAFA;
+  --color-border: #E3E3E7;
+
+  --color-black: #111113;
+  --color-black-soft: #2E2E33;
+  --color-accent-red: #E63946;
+  --color-accent-red-dark: #C4283A;
+  --color-accent-red-soft: #FDE6E8;
+  --color-success: #2E9E5B;
+  --color-success-soft: #E4F6EC;
+  --color-gold: #E8AA2E;
+
+  --gray-100: #F7F7F8;
+  --gray-200: #EDEDF0;
+  --gray-300: #DCDCE1;
+  --gray-400: #B9B9C2;
+  --gray-500: #8E8E98;
+  --gray-600: #6B6B72;
+  --gray-700: #4A4A50;
+  --gray-800: #2E2E33;
+  --gray-900: #1A1A1E;
+
+  /* Paleta das regiões: 12 matizes espalhados pelo círculo cromático, em
+     ordem tal que qualquer prefixo (4, 5 ... 9 primeiras cores, conforme o
+     tamanho do tabuleiro) já seja o mais distinto possível. Tons médios para
+     os personagens e o ✕ branco continuarem legíveis. Nunca dois tons
+     parecidos (ex.: dois amarelos ou dois laranjas) na mesma paleta. */
+  --region-0: #E07B2A;  /* laranja */
+  --region-1: #3B7DD8;  /* azul */
+  --region-2: #4CAF50;  /* verde */
+  --region-3: #D9509B;  /* magenta */
+  --region-4: #D9B920;  /* amarelo */
+  --region-5: #7E57C2;  /* roxo */
+  --region-6: #26A8B8;  /* turquesa */
+  --region-7: #9C6B3F;  /* marrom */
+  --region-8: #D33F3A;  /* vermelho */
+  --region-9: #9CBF2E;  /* lima */
+  --region-10: #6F8AA3; /* cinza-azulado */
+  --region-11: #B983D9; /* lilás */
+
+  --region-border: rgba(10, 10, 12, 0.65);
+  --region-border-soft: rgba(10, 10, 12, 0.22);
+
+  /* Espaçamento */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+
+  /* Raio */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --radius-pill: 999px;
+
+  /* Sombras */
+  --shadow-sm: 0 1px 2px rgba(17, 17, 19, 0.06);
+  --shadow-md: 0 4px 14px rgba(17, 17, 19, 0.09);
+  --shadow-lg: 0 14px 36px rgba(17, 17, 19, 0.16);
+
+  /* Tipografia */
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  /* Transições */
+  --ease-standard: cubic-bezier(.2, .8, .2, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-bg: #121214;
+    --color-surface: #1C1C20;
+    --color-surface-alt: #232327;
+    --color-text-primary: #F5F5F7;
+    --color-text-secondary: #A7A7B0;
+    --color-border: #2E2E34;
+  }
+}

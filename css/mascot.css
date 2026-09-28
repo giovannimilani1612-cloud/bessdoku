@@ -1,0 +1,66 @@
+/*
+ * BESS Doku — mascot.css
+ * Estilos do mascote SVG (o Lulu) e das animações ligadas às suas poses.
+ */
+.mascot {
+  display: block;
+  overflow: visible;
+}
+.mascot--sm { width: 100%; height: 100%; }
+.mascot--md { width: 120px; height: 120px; }
+.mascot--lg { width: 200px; height: auto; }
+.mascot--xl { width: 260px; height: auto; }
+
+.mascot--pose-happy .mascot__tail,
+.mascot--pose-victory .mascot__tail {
+  animation: bd-tail-wag .5s ease-in-out infinite;
+}
+
+.mascot-hero-wrap {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-4) 0;
+  position: relative;
+}
+/* "Holofote" atrás do mascote: garante contraste do Lulu preto tanto no tema
+   claro quanto no escuro, sem depender da cor de fundo da página. */
+.mascot-hero-wrap::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 78%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(230, 57, 70, 0.16) 0%, rgba(230, 57, 70, 0.07) 45%, rgba(230, 57, 70, 0) 72%);
+  z-index: 0;
+}
+.mascot-hero-wrap .mascot,
+.mascot-hero-wrap .mascot-pair {
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 10px 18px rgba(17, 17, 19, 0.22));
+}
+
+.mascot-hero-wrap--celebrate .mascot {
+  animation: bd-mascot-bounce .7s var(--ease-standard);
+}
+
+.mascot-pair {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: var(--space-5);
+}
+.mascot-pair__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  transition: transform .3s var(--ease-standard);
+}
+.mascot-pair__item--winner {
+  transform: scale(1.18) translateY(-6px);
+}
+.mascot-pair__item--winner .mascot { animation: bd-mascot-bounce .8s var(--ease-standard) infinite; }
