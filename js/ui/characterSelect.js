@@ -63,7 +63,7 @@
         }
       }, [
         Dom.el('div', { class: 'char-card__figure' }, [
-          Characters.buildSVG(character.key, { size: 'md', pose: 'happy', detail: 'full' })
+          Characters.buildFigure(character.key, { size: 'md' })
         ]),
         Dom.el('div', { class: 'char-card__label', text: character.label }),
         Dom.el('div', { class: 'char-card__sub', text: excluded ? (options.excludeReason || 'Já escolhido pelo outro jogador') : character.description })

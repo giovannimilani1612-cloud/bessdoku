@@ -424,10 +424,10 @@
   filter: grayscale(.6);
 }
 .char-card__figure {
-  width: 96px;
-  height: 130px;
+  width: 110px;
+  height: 110px;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
 }
 .char-card__figure .mascot { width: 100%; height: 100%; }

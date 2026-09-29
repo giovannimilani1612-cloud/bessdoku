@@ -6,7 +6,7 @@
   'use strict';
 
   var Dom = BessDoku.Dom;
-  var Mascot = BessDoku.Mascot;
+  var Characters = BessDoku.Characters;
 
   function tile(opts) {
     var children = [
@@ -28,7 +28,7 @@
     var screen = Dom.el('div', { class: 'screen screen--home container-scroll' });
 
     screen.appendChild(Dom.el('div', { class: 'mascot-hero-wrap' }, [
-      Mascot.buildSVG({ size: 'xl', pose: 'happy', detail: 'full' })
+      Characters.buildFigure(Characters.DEFAULT_KEY, { size: 'xl' })
     ]));
 
     screen.appendChild(Dom.el('h1', { class: 'text-center', style: 'font-size:2rem;font-weight:900;letter-spacing:-.02em;', text: 'BESS Doku' }));

@@ -14,7 +14,6 @@
   var Duel = BessDoku.Duel;
   var Difficulty = BessDoku.Difficulty;
   var Timer = BessDoku.Timer;
-  var Mascot = BessDoku.Mascot;
   var Characters = BessDoku.Characters;
   var CharacterSelectScreen = BessDoku.CharacterSelectScreen;
   var Sound = BessDoku.Sound;
@@ -36,7 +35,7 @@
 
   function renderLoadingScreen() {
     return centeredScreen([
-      Mascot.buildSVG({ size: 'lg', pose: 'idle', detail: 'full', className: 'mascot--loading' }),
+      Characters.buildFigure(Characters.DEFAULT_KEY, { size: 'lg', className: 'mascot--loading' }),
       Dom.el('h1', { text: 'Preparando o desafio...' }),
       Dom.el('p', { class: 'text-secondary', text: 'Só um instante, o Lulu está pensando!' })
     ]);
@@ -54,7 +53,7 @@
     if (match.characterP1) {
       // Rodadas seguintes do Melhor de 3: personagem já escolhido.
       Screens.show(centeredScreen([
-        Characters.buildSVG(match.characterP1, { size: 'lg', pose: 'happy', detail: 'full' }),
+        Characters.buildFigure(match.characterP1, { size: 'lg' }),
         Dom.el('h1', { text: 'Jogador 1' }),
         Dom.el('p', { class: 'text-secondary', text: 'Prepare-se, ' + Characters.get(match.characterP1).label + '! ' + contextLine(match) }),
         Dom.el('button', {
@@ -95,7 +94,7 @@
   // ---------- Passagem e Jogador 2 ----------
   function showPassDevice(match, router) {
     Screens.show(centeredScreen([
-      Mascot.buildSVG({ size: 'lg', pose: 'shy', detail: 'full' }),
+      Characters.buildFigure(Characters.DEFAULT_KEY, { size: 'lg' }),
       Dom.el('h1', { text: 'Desafio concluído!' }),
       Dom.el('p', { class: 'text-secondary', text: 'Passe o dispositivo para o Jogador 2.' }),
       Dom.el('p', { class: 'text-small text-secondary', text: 'O resultado do Jogador 1 ficará em segredo até o fim.' }),
@@ -148,7 +147,7 @@
   function showRoundTransition(match, router) {
     var finishedRound = match.roundIndex;
     Screens.show(centeredScreen([
-      Mascot.buildSVG({ size: 'lg', pose: 'happy', detail: 'full' }),
+      Characters.buildFigure(Characters.DEFAULT_KEY, { size: 'lg' }),
       Dom.el('h1', { text: 'Rodada ' + finishedRound + ' concluída!' }),
       Dom.el('p', { class: 'text-secondary', text: 'Passe o dispositivo. Os placares só aparecem no final.' }),
       Dom.el('button', {
@@ -187,11 +186,11 @@
 
     screen.appendChild(Dom.el('div', { class: 'mascot-hero-wrap' }, [Dom.el('div', { class: 'mascot-pair' }, [
       Dom.el('div', { class: 'mascot-pair__item' + (winner === 'p1' ? ' mascot-pair__item--winner' : '') }, [
-        Characters.buildSVG(match.characterP1, { size: 'md', pose: winner === 'p1' ? 'victory' : 'idle', detail: 'full' }),
+        Characters.buildFigure(match.characterP1, { size: 'md' }),
         Dom.el('span', { class: 'text-small text-secondary', text: 'Jogador 1' })
       ]),
       Dom.el('div', { class: 'mascot-pair__item' + (winner === 'p2' ? ' mascot-pair__item--winner' : '') }, [
-        Characters.buildSVG(match.characterP2, { size: 'md', pose: winner === 'p2' ? 'victory' : 'idle', detail: 'full' }),
+        Characters.buildFigure(match.characterP2, { size: 'md' }),
         Dom.el('span', { class: 'text-small text-secondary', text: 'Jogador 2' })
       ])
     ])]));

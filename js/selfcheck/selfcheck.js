@@ -295,14 +295,14 @@
     check('personagens: contém bess/mamae/papai/amigo', !!(keys.bess && keys.mamae && keys.papai && keys.amigo));
     check('personagens: get inválido cai no BESS', BessDoku.Characters.get('xyz').key === 'bess');
     list.forEach(function (c) {
-      ['iconic', 'full'].forEach(function (detail) {
-        try {
-          var svg = BessDoku.Characters.buildSVG(c.key, { size: 'md', pose: 'happy', detail: detail });
-          check('personagens: SVG ' + c.key + '/' + detail, !!(svg && svg.tagName && svg.tagName.toLowerCase() === 'svg' && svg.childNodes.length > 0));
-        } catch (e) {
-          check('personagens: SVG ' + c.key + '/' + detail + ' sem exceção', false, String(e));
-        }
-      });
+      try {
+        var img = BessDoku.Characters.buildFigure(c.key, { size: 'md' });
+        var srcOk = !!(img && img.getAttribute('src') === 'img/characters/' + c.key + '.jpg');
+        var isImg = !!(img && img.tagName && img.tagName.toLowerCase() === 'img');
+        check('personagens: foto ' + c.key, isImg && srcOk && !!img.alt, img ? img.getAttribute('src') : 'null');
+      } catch (e) {
+        check('personagens: foto ' + c.key + ' sem exceção', false, String(e));
+      }
     });
   }
 

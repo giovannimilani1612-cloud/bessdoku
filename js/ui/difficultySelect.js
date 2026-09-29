@@ -8,7 +8,7 @@
   var Dom = BessDoku.Dom;
   var Difficulty = BessDoku.Difficulty;
   var Timer = BessDoku.Timer;
-  var Mascot = BessDoku.Mascot;
+  var Characters = BessDoku.Characters;
   var Ranking = BessDoku.Ranking;
 
   var MODE_TITLES = {
@@ -34,7 +34,7 @@
     Difficulty.list().forEach(function (tier) {
       var best = bestTimes[tier.key];
       var iconWrap = Dom.el('div', { class: 'diff-card__icon' }, [
-        Mascot.buildSVG({ size: 'sm', pose: 'idle', detail: 'iconic' })
+        Characters.buildFigure(Characters.DEFAULT_KEY, { size: 'sm' })
       ]);
       var card = Dom.el('button', {
         type: 'button',

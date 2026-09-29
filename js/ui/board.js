@@ -64,7 +64,7 @@
       cellEl.classList.remove('cell--lulu', 'cell--x');
       if (mark === Rules.LULU) {
         cellEl.classList.add('cell--lulu');
-        cellEl.appendChild(Characters.buildSVG(session.character, { size: 'sm', pose: 'happy', detail: 'iconic', className: 'cell__mascot' }));
+        cellEl.appendChild(Characters.buildFigure(session.character, { size: 'sm', className: 'cell__mascot' }));
       } else if (mark === Rules.MARK_X) {
         cellEl.classList.add('cell--x');
         cellEl.appendChild(Dom.el('span', { class: 'cell__x', text: '✕' }));

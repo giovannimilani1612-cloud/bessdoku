@@ -5,22 +5,22 @@
  * telas de resultado.
  *
  *   bess  -> o Lulu da Pomerânia preto (mascote original)
- *   mamae -> Mamãe do BESS, humana, advogada com a Constituição na mão
- *   papai -> Papai do BESS, humano, engenheiro de capacete
- *   amigo -> Amigo do BESS, outro Lulu, de pelo caramelo
+ *   mamae -> Mamãe do BESS, advogada
+ *   papai -> Papai do BESS, engenheiro
+ *   amigo -> Amigo do BESS, um caramelo brasileiro
  *
- * `buildSVG` despacha para o desenhista certo (ui/mascot.js para os cães,
- * ui/humanCharacter.js para os humanos); esses módulos carregam depois deste,
- * por isso são resolvidos só na hora da chamada.
+ * Cada personagem tem uma foto real (img/characters/*.jpg, recorte quadrado
+ * centrado no rosto). `buildFigure` devolve um <img> redondo (medalhão) com as
+ * classes .mascot que o CSS de layout e as animações já conhecem.
  */
 (function (BessDoku) {
   'use strict';
 
   var LIST = [
-    { key: 'bess', label: 'BESS', short: 'BESS', kind: 'dog', palette: 'black', description: 'O Lulu preto original' },
-    { key: 'mamae', label: 'Mamãe do BESS', short: 'Mamãe', kind: 'human', outfit: 'lawyer', description: 'Advogada, com a Constituição' },
-    { key: 'papai', label: 'Papai do BESS', short: 'Papai', kind: 'human', outfit: 'engineer', description: 'Engenheiro, de capacete' },
-    { key: 'amigo', label: 'Amigo do BESS', short: 'Amigo', kind: 'dog', palette: 'caramel', description: 'Um Lulu caramelo' }
+    { key: 'bess', label: 'BESS', short: 'BESS', image: 'img/characters/bess.jpg', description: 'O Lulu preto original' },
+    { key: 'mamae', label: 'Mamãe do BESS', short: 'Mamãe', image: 'img/characters/mamae.jpg', description: 'Advogada' },
+    { key: 'papai', label: 'Papai do BESS', short: 'Papai', image: 'img/characters/papai.jpg', description: 'Engenheiro' },
+    { key: 'amigo', label: 'Amigo do BESS', short: 'Amigo', image: 'img/characters/amigo.jpg', description: 'Caramelo brasileiro' }
   ];
   var DEFAULT_KEY = 'bess';
 
@@ -49,16 +49,20 @@
     BessDoku.Settings.update({ lastCharacter: key });
   }
 
-  // options: { size, pose, detail, className } — mesmos de Mascot.buildSVG.
-  function buildSVG(key, options) {
+  // options: { size: 'sm'|'md'|'lg'|'xl', className }
+  // Retorna a foto do personagem como <img> redondo; ver css/mascot.css.
+  function buildFigure(key, options) {
     var character = get(key);
-    options = Object.assign({}, options || {});
-    if (character.kind === 'human') {
-      options.outfit = character.outfit;
-      return BessDoku.HumanCharacter.buildSVG(options);
-    }
-    options.palette = character.palette;
-    return BessDoku.Mascot.buildSVG(options);
+    options = options || {};
+    var size = options.size || 'md';
+    var cls = 'mascot mascot--photo mascot--' + size + (options.className ? ' ' + options.className : '');
+    return BessDoku.Dom.el('img', {
+      class: cls,
+      src: character.image,
+      alt: character.label,
+      draggable: 'false',
+      decoding: 'async'
+    });
   }
 
   BessDoku.Characters = {
@@ -68,6 +72,6 @@
     isValidKey: isValidKey,
     getLast: getLast,
     setLast: setLast,
-    buildSVG: buildSVG
+    buildFigure: buildFigure
   };
 })(window.BessDoku);

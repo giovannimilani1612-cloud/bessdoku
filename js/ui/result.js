@@ -42,7 +42,7 @@
     var screen = Dom.el('div', { class: 'screen screen--result container-scroll' });
 
     screen.appendChild(Dom.el('div', { class: 'mascot-hero-wrap mascot-hero-wrap--celebrate' }, [
-      Characters.buildSVG(snapshot.character, { size: 'lg', pose: 'victory', detail: 'full' })
+      Characters.buildFigure(snapshot.character, { size: 'lg' })
     ]));
 
     screen.appendChild(Dom.el('h1', { class: 'text-center', text: options.title || 'Desafio concluído!' }));

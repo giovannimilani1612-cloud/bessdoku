@@ -43,7 +43,7 @@
         context.subtitle ? Dom.el('div', { class: 'text-small text-secondary', text: context.subtitle }) : null
       ]),
       Dom.el('div', { class: 'topbar__avatar', title: character.label }, [
-        Characters.buildSVG(session.character, { size: 'sm', pose: 'idle', detail: 'iconic' })
+        Characters.buildFigure(session.character, { size: 'sm' })
       ])
     ]);
 

@@ -21,7 +21,7 @@
 
   function renderLoadingScreen() {
     return BessDoku.Dom.el('div', { class: 'screen' }, [BessDoku.Dom.el('div', { class: 'pass-device' }, [
-      BessDoku.Mascot.buildSVG({ size: 'lg', pose: 'idle', detail: 'full', className: 'mascot--loading' }),
+      BessDoku.Characters.buildFigure(BessDoku.Characters.DEFAULT_KEY, { size: 'lg', className: 'mascot--loading' }),
       BessDoku.Dom.el('h1', { text: 'Preparando o desafio...' }),
       BessDoku.Dom.el('p', { class: 'text-secondary', text: 'Só um instante, o Lulu está pensando!' })
     ])]);
