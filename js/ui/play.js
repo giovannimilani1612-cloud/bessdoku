@@ -72,7 +72,7 @@
 
     var controlsHint = Dom.el('p', {
       class: 'text-center text-small text-secondary',
-      text: 'Toque uma vez para marcar ✕ · toque duas vezes para colocar ' + name
+      text: 'Toque para marcar ✕ · arraste para marcar vários · toque duas vezes rápido para colocar ' + name
     });
 
     var hintBtn = Dom.el('button', { class: 'btn btn--ghost btn--pill btn--block', text: '💡 Dica' });
@@ -96,7 +96,17 @@
     boardView.bindTapHandler(function (row, col, isDoubleTap) {
       Sound.resumeContext();
       boardView.clearHintHighlight();
+      // O primeiro toque já foi aplicado na hora; no duplo, desfaz esse primeiro
+      // toque para a jogada contar uma vez só (ver Session.undoRecentTap).
+      if (isDoubleTap) session.undoRecentTap(row, col, 400);
       session.interactCell(row, col, isDoubleTap);
+    });
+
+    // Arrasto: pinta ✕ nas células vazias por onde o dedo passa.
+    boardView.bindPaintHandler(function (row, col) {
+      Sound.resumeContext();
+      boardView.clearHintHighlight();
+      session.paintX(row, col);
     });
 
     screen.appendChild(topbar);

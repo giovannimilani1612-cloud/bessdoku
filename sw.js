@@ -2,7 +2,7 @@
    Pré-cacheia todos os arquivos do jogo para funcionar offline.
    IMPORTANTE: ao alterar qualquer arquivo do jogo, aumente CACHE_NAME (v1 -> v2 ...)
    para que os jogadores recebam a versão nova. */
-var CACHE_NAME = 'bessdoku-v1';
+var CACHE_NAME = 'bessdoku-v2';
 
 var PRECACHE = [
   './',

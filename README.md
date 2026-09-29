@@ -4,6 +4,12 @@ Puzzle de lógica do Lulu da Pomerânia (estilo Star Battle): coloque um Lulu po
 
 Feito em HTML, CSS e JavaScript puros, sem servidor. Funciona offline como PWA.
 
+## Como jogar
+
+- **Toque** numa casa para marcar ✕ (aparece na hora); toque de novo para desmarcar.
+- **Arraste** o dedo pelo tabuleiro para marcar ✕ em várias casas vazias de uma vez.
+- **Toque duas vezes rápido** numa casa para colocar o personagem (ou removê-lo).
+
 ## Jogar / instalar no Android
 
 1. Abra **https://giovannimilani1612-cloud.github.io/bessdoku/** no Chrome do tablet ou celular.

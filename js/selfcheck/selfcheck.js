@@ -144,9 +144,39 @@
     check('sessão: casa certa recebe o personagem', session.board.marks[0][2] === BessDoku.Rules.LULU);
     check('sessão: casa certa não conta erro', session.board.errorCount === 1);
 
+    // Arrasto (paintX): só pinta casa vazia; nunca apaga X nem remove personagem.
+    var movesBeforePaint = session.board.moveCount;
+    session.paintX(1, 1);
+    check('sessão: paintX marca X em casa vazia', session.board.marks[1][1] === BessDoku.Rules.MARK_X);
+    check('sessão: paintX conta 1 jogada', session.board.moveCount === movesBeforePaint + 1);
+    var repaint = session.paintX(1, 1);
+    check('sessão: paintX sobre X é ignorado', repaint.ignored === true && session.board.marks[1][1] === BessDoku.Rules.MARK_X);
+    check('sessão: paintX ignorado não conta jogada', session.board.moveCount === movesBeforePaint + 1);
+    session.paintX(0, 2);
+    check('sessão: paintX não remove personagem', session.board.marks[0][2] === BessDoku.Rules.LULU);
+
+    // Toque simples imediato + undoRecentTap (primeiro toque de um toque duplo).
+    var movesBeforeTap = session.board.moveCount;
+    var histBeforeTap = session.board.history.length;
+    session.interactCell(2, 0, false);
+    check('sessão: toque simples marca X na hora', session.board.marks[2][0] === BessDoku.Rules.MARK_X);
+    check('sessão: undoRecentTap desfaz o toque recente', session.undoRecentTap(2, 0, 400) === true);
+    check('sessão: undo devolve a casa ao estado anterior', session.board.marks[2][0] === BessDoku.Rules.EMPTY);
+    check('sessão: undo devolve a contagem de jogadas', session.board.moveCount === movesBeforeTap);
+    check('sessão: undo remove a entrada do histórico', session.board.history.length === histBeforeTap);
+    check('sessão: undo repetido não faz nada', session.undoRecentTap(2, 0, 400) === false);
+    check('sessão: undo em outra casa não faz nada', session.undoRecentTap(0, 0, 400) === false);
+
+    // Toque duplo real na casa certa (1,0): toque simples + undo + duplo = 1 jogada.
+    var movesBeforeDouble = session.board.moveCount;
+    session.interactCell(1, 0, false);
+    session.undoRecentTap(1, 0, 400);
+    session.interactCell(1, 0, true);
+    check('sessão: toque duplo coloca o personagem', session.board.marks[1][0] === BessDoku.Rules.LULU);
+    check('sessão: toque duplo conta 1 jogada só', session.board.moveCount === movesBeforeDouble + 1, 'moves=' + (session.board.moveCount - movesBeforeDouble));
+
     // Completar o puzzle: penalidade não pode ser somada duas vezes no fim.
     session.start();
-    session.interactCell(1, 0, true);
     session.interactCell(2, 3, true);
     session.interactCell(3, 1, true);
     check('sessão: puzzle resolvido', session.board.finished === true);
@@ -154,6 +184,101 @@
     check('sessão: tempo final = real + penalidade', session.board.finalTimeMs === session.board.elapsedMs + penalty * 1000);
     var snap = session.snapshotResult();
     check('sessão: snapshot inclui personagem', snap.character === 'mamae');
+  }
+
+  // Gestos no DOM real (BoardView + Pointer Events sintéticos). É síncrono
+  // porque o toque simples é aplicado na hora e o duplo só compara timestamps.
+  function runBoardGestureChecks() {
+    if (typeof PointerEvent !== 'function' || !BessDoku.BoardView) {
+      check('gestos: PointerEvent indisponível (pulado)', true);
+      return;
+    }
+    var regions = [
+      [1, 1, 0, 0],
+      [1, 1, 0, 0],
+      [3, 3, 2, 2],
+      [3, 3, 2, 2]
+    ];
+    var puzzle = { id: 'selfcheck-gestos', size: 4, regions: regions, solution: [2, 0, 3, 1], difficultyTier: BessDoku.Difficulty.list()[0].key };
+    var session = BessDoku.Session.create(puzzle, 'selfcheck', {}, null, 'bess');
+    var view = BessDoku.BoardView.create(session);
+    var taps = [];
+    view.bindTapHandler(function (row, col, isDoubleTap) {
+      taps.push({ row: row, col: col, dbl: isDoubleTap });
+      if (isDoubleTap) session.undoRecentTap(row, col, 400);
+      session.interactCell(row, col, isDoubleTap);
+    });
+    view.bindPaintHandler(function (row, col) { session.paintX(row, col); });
+
+    var wrap = document.createElement('div');
+    wrap.style.cssText = 'position:fixed;left:0;top:0;width:320px;height:320px;z-index:9999;';
+    wrap.appendChild(view.el);
+    document.body.appendChild(wrap);
+
+    function center(r, c) {
+      var rect = view.cellEls[r][c].getBoundingClientRect();
+      return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+    }
+    function fire(type, r, c, id) {
+      var p = center(r, c);
+      view.cellEls[r][c].dispatchEvent(new PointerEvent(type, { pointerId: id || 1, clientX: p.x, clientY: p.y, bubbles: true, cancelable: true }));
+    }
+    function tap(r, c) { fire('pointerdown', r, c); fire('pointerup', r, c); }
+
+    try {
+      var rect0 = view.cellEls[0][0].getBoundingClientRect();
+      check('gestos: célula tem tamanho na tela', rect0.width > 8 && rect0.height > 8, 'w=' + rect0.width);
+      check('gestos: elementFromPoint acha a célula', document.elementFromPoint(center(0, 0).x, center(0, 0).y) === view.cellEls[0][0]);
+
+      tap(0, 0);
+      check('gestos: toque simples marca X sem esperar', session.board.marks[0][0] === BessDoku.Rules.MARK_X);
+      check('gestos: toque simples chega como isDoubleTap=false', taps.length === 1 && taps[0].dbl === false);
+
+      tap(1, 0); tap(1, 0);
+      check('gestos: dois toques rápidos chegam como duplo', taps.length === 3 && taps[2].dbl === true);
+      check('gestos: toque duplo coloca o personagem', session.board.marks[1][0] === BessDoku.Rules.LULU);
+      check('gestos: toque duplo conta 1 jogada', session.board.moveCount === 2, 'moves=' + session.board.moveCount);
+
+      // Arrasto em "U" sem diagonais: (2,0) → (2,1) → (2,2) → (1,2) → (0,2) →
+      // (0,1) → (0,0) → (1,0). Seis casas vazias viram X; (0,0), que já era X,
+      // e o personagem em (1,0) não mudam.
+      var before = session.board.moveCount;
+      fire('pointerdown', 2, 0);
+      fire('pointermove', 2, 1);
+      fire('pointermove', 2, 2);
+      fire('pointermove', 1, 2);
+      fire('pointermove', 0, 2);
+      fire('pointermove', 0, 1);
+      fire('pointermove', 0, 0);
+      fire('pointermove', 1, 0);
+      fire('pointerup', 1, 0);
+      var m = session.board.marks;
+      check('gestos: arrasto pinta a célula inicial', m[2][0] === BessDoku.Rules.MARK_X);
+      check('gestos: arrasto pinta as células do caminho', m[2][1] === BessDoku.Rules.MARK_X && m[2][2] === BessDoku.Rules.MARK_X && m[1][2] === BessDoku.Rules.MARK_X && m[0][2] === BessDoku.Rules.MARK_X && m[0][1] === BessDoku.Rules.MARK_X);
+      check('gestos: arrasto não pinta fora do caminho', m[1][1] === BessDoku.Rules.EMPTY && m[3][0] === BessDoku.Rules.EMPTY);
+      check('gestos: arrasto não remove personagem', m[1][0] === BessDoku.Rules.LULU);
+      check('gestos: arrasto não apaga X existente', m[0][0] === BessDoku.Rules.MARK_X);
+      check('gestos: arrasto conta só as células pintadas', session.board.moveCount === before + 6, 'moves=' + (session.board.moveCount - before));
+      check('gestos: soltar após arrasto não vira toque', taps.length === 3);
+
+      // Arrasto de volta pelo mesmo caminho: nada muda.
+      fire('pointerdown', 2, 2);
+      fire('pointermove', 2, 1);
+      fire('pointermove', 2, 0);
+      fire('pointerup', 2, 0);
+      check('gestos: repassar pelo caminho não desmarca', m[2][1] === BessDoku.Rules.MARK_X && session.board.moveCount === before + 6);
+
+      // Deslize rápido: um único pointermove saltando de (3,0) para (3,3) deve
+      // pintar também (3,1) e (3,2), que ficaram no caminho.
+      fire('pointerdown', 3, 0);
+      fire('pointermove', 3, 3);
+      fire('pointerup', 3, 3);
+      check('gestos: deslize rápido pinta as células puladas', session.board.marks[3][0] === BessDoku.Rules.MARK_X && session.board.marks[3][1] === BessDoku.Rules.MARK_X && session.board.marks[3][2] === BessDoku.Rules.MARK_X && session.board.marks[3][3] === BessDoku.Rules.MARK_X);
+    } catch (e) {
+      check('gestos: sem exceção', false, String(e));
+    } finally {
+      if (wrap.parentNode) wrap.parentNode.removeChild(wrap);
+    }
   }
 
   function runSettingsChecks() {
@@ -208,6 +333,7 @@
     runRuleChecks();
     runSettingsChecks();
     runSessionChecks();
+    runBoardGestureChecks();
     runCharacterChecks();
     runSolverChecks();
     runGeneratorChecks();
