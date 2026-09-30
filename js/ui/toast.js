@@ -36,7 +36,8 @@
     }, 2300);
   }
 
-  var CONFETTI_COLORS = ['#E63946', '#111113', '#F4D9B8', '#B7DDD9', '#EDE0A6', '#C7DCC0', '#D8CCEB'];
+  // Paleta quente do layout: coral, dourado, céu, menta, creme, lilás e marrom.
+  var CONFETTI_COLORS = ['#E8503E', '#F4B740', '#7CC4F2', '#7ED9A8', '#FFE3BF', '#C8B4F0', '#3B2A1F'];
 
   function burstConfetti(count) {
     ensureLayers();

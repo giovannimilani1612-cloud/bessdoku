@@ -1,11 +1,21 @@
 /*
  * BESS Doku — board.css
  * Tabuleiro do puzzle: grade de regiões coloridas, células e seus estados.
+ * A moldura (.board-frame) é só apresentação; a grade e as células são
+ * exatamente as mesmas da jogabilidade aprovada.
  */
 .board-wrap {
   display: flex;
   justify-content: center;
-  padding: var(--space-2) 0;
+  padding: var(--space-1) 0;
+}
+
+/* Moldura branca: o tabuleiro vira uma "peça" apoiada sobre a mesa. */
+.board-frame {
+  padding: 10px;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md), var(--shadow-ring);
 }
 
 .board {
@@ -13,12 +23,11 @@
   display: grid;
   grid-template-columns: repeat(var(--n), 1fr);
   grid-template-rows: repeat(var(--n), 1fr);
-  width: min(92vw, 460px);
+  width: min(92vw - 20px, 460px);
   aspect-ratio: 1 / 1;
   border-radius: var(--radius-md);
   overflow: hidden;
-  box-shadow: var(--shadow-md);
-  background: var(--color-black);
+  background: var(--color-black-deep);
   gap: 0;
 }
 

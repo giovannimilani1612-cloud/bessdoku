@@ -1,7 +1,7 @@
 /*
  * BESS Doku — mascot.css
- * Estilos das figuras dos personagens (fotos em medalhão redondo) e do
- * "holofote" atrás delas nas telas de destaque.
+ * Medalhões redondos dos personagens e o "holofote" atrás deles nas telas
+ * centradas. Os pôsteres grandes ficam em components.css (.hero-poster).
  */
 .mascot {
   display: block;
@@ -12,16 +12,21 @@
 .mascot--xl { width: 260px; height: 260px; }
 
 /* Foto do personagem: quadrado recortado no rosto, exibido como círculo com
-   anel claro + sombra (funciona sobre o tema claro e o escuro). */
+   anel branco + sombra quente (funciona sobre o tema claro e o escuro). */
 .mascot--photo {
   aspect-ratio: 1;
   border-radius: 50%;
   /* overflow: visible num <img> impediria o recorte redondo (Chrome 108+). */
   overflow: hidden;
   object-fit: cover;
-  box-shadow: 0 0 0 3px var(--color-surface), 0 4px 12px rgba(17, 17, 19, 0.25);
+  box-shadow: 0 0 0 4px var(--color-surface), 0 6px 16px rgba(var(--shadow-color), 0.22);
   -webkit-user-drag: none;
   user-select: none;
+}
+
+/* Medalhão flutuando suavemente enquanto o tabuleiro é gerado. */
+.mascot--loading {
+  animation: bd-float 2.6s ease-in-out infinite;
 }
 
 .mascot-hero-wrap {
@@ -30,36 +35,41 @@
   padding: var(--space-4) 0;
   position: relative;
 }
-/* "Holofote" atrás do mascote: garante contraste do Lulu preto tanto no tema
-   claro quanto no escuro, sem depender da cor de fundo da página. */
+/* "Holofote" dourado atrás do mascote: garante contraste do Lulu preto tanto
+   no tema claro quanto no escuro, sem depender da cor de fundo da página. */
 .mascot-hero-wrap::before {
   content: "";
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 78%;
+  width: 82%;
   aspect-ratio: 1;
   transform: translate(-50%, -50%);
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(230, 57, 70, 0.16) 0%, rgba(230, 57, 70, 0.07) 45%, rgba(230, 57, 70, 0) 72%);
+  background: radial-gradient(circle, rgba(244, 183, 64, 0.28) 0%, rgba(244, 183, 64, 0.10) 45%, rgba(244, 183, 64, 0) 72%);
   z-index: 0;
 }
 .mascot-hero-wrap .mascot,
 .mascot-hero-wrap .mascot-pair {
   position: relative;
   z-index: 1;
-  filter: drop-shadow(0 10px 18px rgba(17, 17, 19, 0.22));
 }
 
 .mascot-hero-wrap--celebrate .mascot {
   animation: bd-mascot-bounce .7s var(--ease-standard);
 }
 
+/* Telas centradas (carregando, pausa, passar o aparelho): anel dourado
+   suave em volta do medalhão grande. */
+.pass-device .mascot--lg {
+  box-shadow: 0 0 0 4px var(--color-surface), 0 0 0 6px rgba(244, 183, 64, 0.45), 0 12px 32px rgba(var(--shadow-color), 0.22);
+}
+
 .mascot-pair {
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  gap: var(--space-5);
+  gap: var(--space-6);
 }
 .mascot-pair__item {
   display: flex;
@@ -71,4 +81,8 @@
 .mascot-pair__item--winner {
   transform: scale(1.18) translateY(-6px);
 }
-.mascot-pair__item--winner .mascot { animation: bd-mascot-bounce .8s var(--ease-standard) infinite; }
+.mascot-pair__item--winner .mascot {
+  box-shadow: 0 0 0 4px var(--color-surface), 0 0 0 7px var(--color-gold), 0 10px 24px rgba(var(--shadow-color), 0.25);
+  animation: bd-mascot-bounce .8s var(--ease-standard) infinite;
+}
+.mascot-pair__item--winner .text-small { color: var(--color-gold-dark); font-weight: 800; }

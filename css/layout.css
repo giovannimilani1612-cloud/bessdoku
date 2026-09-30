@@ -1,11 +1,22 @@
 /*
  * BESS Doku — layout.css
- * Estrutura geral da aplicação e responsividade.
+ * Estrutura geral da aplicação, fundo "iluminado" e responsividade.
  */
 html, body {
-  background: var(--color-bg);
   color: var(--color-text-primary);
   font-family: var(--font-family);
+}
+
+/* Fundo creme com "luz dourada" no topo e um brilho pêssego no canto
+   inferior: ambiente quente estilo animação, sem imagens. */
+body {
+  background:
+    radial-gradient(120% 70% at 50% -20%, var(--color-bg-glow) 0%, rgba(255, 227, 191, 0) 60%),
+    radial-gradient(70% 50% at 100% 100%, var(--color-bg-glow-2) 0%, rgba(255, 217, 204, 0) 70%),
+    var(--color-bg);
+  background-color: var(--color-bg);
+  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 #app-root {
@@ -16,17 +27,18 @@ html, body {
   max-width: 640px;
   margin: 0 auto;
   position: relative;
-  background: var(--color-bg);
 }
 
+/* Em telas grandes o app vira um "aparelho" centralizado sobre o fundo. */
 @media (min-width: 900px) {
   #app-root {
     max-width: 760px;
-    box-shadow: var(--shadow-lg);
-    margin-top: var(--space-5);
-    margin-bottom: var(--space-5);
-    border-radius: var(--radius-lg);
-    min-height: calc(100vh - 2 * var(--space-5));
+    background: var(--color-surface-glass);
+    box-shadow: var(--shadow-lg), 0 0 0 1px rgba(255, 255, 255, 0.5);
+    margin-top: var(--space-6);
+    margin-bottom: var(--space-6);
+    border-radius: var(--radius-xl);
+    min-height: calc(100vh - 2 * var(--space-6));
     overflow: hidden;
   }
 }
@@ -36,12 +48,12 @@ html, body {
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding: var(--space-4) var(--space-4) var(--space-6);
+  padding: calc(var(--space-4) + env(safe-area-inset-top, 0px)) var(--space-4) calc(var(--space-6) + env(safe-area-inset-bottom, 0px));
   gap: var(--space-4);
 }
 
 .screen-fade-in {
-  animation: bd-fade-slide-in .28s var(--ease-standard);
+  animation: bd-fade-slide-in .32s var(--ease-standard);
 }
 
 .container-scroll {
@@ -58,10 +70,12 @@ html, body {
 }
 
 .topbar__title {
-  font-size: 1.05rem;
-  font-weight: 700;
-  letter-spacing: .01em;
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  line-height: 1.2;
 }
+.topbar__title .text-small { font-weight: 600; margin-top: 2px; }
 
 .spacer { flex: 1; }
 
@@ -84,6 +98,36 @@ html, body {
 .text-center { text-align: center; }
 .text-secondary { color: var(--color-text-secondary); }
 .text-small { font-size: .82rem; }
+.text-strong { font-weight: 800; }
+.text-lg { font-size: 1.15rem; font-weight: 800; }
+.text-xl { font-size: 1.35rem; font-weight: 900; letter-spacing: -.01em; }
+.text-accent { color: var(--color-accent-red-dark); font-weight: 800; }
+
+/* Títulos de tela (h1 dentro de .screen) */
+.screen h1 {
+  font-size: 1.6rem;
+  font-weight: 900;
+  letter-spacing: -.02em;
+  line-height: 1.15;
+}
+
+/* Marca na tela inicial */
+.brand { text-align: center; }
+.brand__title {
+  font-size: 2.4rem;
+  font-weight: 900;
+  letter-spacing: -.035em;
+  line-height: 1;
+}
+.brand__title em {
+  font-style: normal;
+  color: var(--color-accent-red);
+}
+.brand__tagline {
+  margin-top: var(--space-2);
+  color: var(--color-text-secondary);
+  font-weight: 600;
+}
 
 @media (prefers-reduced-motion: reduce), body.reduced-motion {
   *, *::before, *::after {

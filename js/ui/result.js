@@ -41,9 +41,7 @@
     var tier = Difficulty.get(snapshot.difficultyTier);
     var screen = Dom.el('div', { class: 'screen screen--result container-scroll' });
 
-    screen.appendChild(Dom.el('div', { class: 'mascot-hero-wrap mascot-hero-wrap--celebrate' }, [
-      Characters.buildFigure(snapshot.character, { size: 'lg' })
-    ]));
+    screen.appendChild(Characters.buildHeroPoster(snapshot.character, { small: true, celebrate: true }));
 
     screen.appendChild(Dom.el('h1', { class: 'text-center', text: options.title || 'Desafio concluído!' }));
     if (options.subtitleLine) {
@@ -55,7 +53,7 @@
     screen.appendChild(Dom.el('div', { class: 'row row--center' }, [ratingBadge(snapshot.rating)]));
 
     if (options.isNewBest) {
-      screen.appendChild(Dom.el('p', { class: 'text-center', style: 'color:var(--color-accent-red-dark);font-weight:800;', text: '🏆 Novo melhor tempo!' }));
+      screen.appendChild(Dom.el('p', { class: 'text-center text-accent', text: '🏆 Novo melhor tempo!' }));
     }
 
     screen.appendChild(Dom.el('div', { class: 'card' }, [buildStatGrid(snapshot)]));

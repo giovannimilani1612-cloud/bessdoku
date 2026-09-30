@@ -62,11 +62,11 @@
           refresh();
         }
       }, [
-        Dom.el('div', { class: 'char-card__figure' }, [
-          Characters.buildFigure(character.key, { size: 'md' })
-        ]),
-        Dom.el('div', { class: 'char-card__label', text: character.label }),
-        Dom.el('div', { class: 'char-card__sub', text: excluded ? (options.excludeReason || 'Já escolhido pelo outro jogador') : character.description })
+        Characters.buildPoster(character.key, { className: 'char-card__poster' }),
+        Dom.el('div', { class: 'char-card__body' }, [
+          Dom.el('div', { class: 'char-card__label', text: character.label }),
+          Dom.el('div', { class: 'char-card__sub', text: excluded ? (options.excludeReason || 'Já escolhido pelo outro jogador') : character.description })
+        ])
       ]);
       cardEls[character.key] = card;
       grid.appendChild(card);

@@ -9,18 +9,19 @@
  *   papai -> Papai do BESS, engenheiro
  *   amigo -> Amigo do BESS, um caramelo brasileiro
  *
- * Cada personagem tem uma foto real (img/characters/*.jpg, recorte quadrado
- * centrado no rosto). `buildFigure` devolve um <img> redondo (medalhão) com as
- * classes .mascot que o CSS de layout e as animações já conhecem.
+ * Cada personagem tem duas imagens (estilo Pixar): `image` é o recorte quadrado
+ * no rosto (medalhão redondo, via `buildFigure`) e `poster` é a cena inteira
+ * (cartão grande das telas de destaque, via `buildPoster`). Ambas devolvem um
+ * <img> com as classes que o CSS de layout e as animações já conhecem.
  */
 (function (BessDoku) {
   'use strict';
 
   var LIST = [
-    { key: 'bess', label: 'BESS', short: 'BESS', image: 'img/characters/bess.jpg', description: 'O Lulu preto original' },
-    { key: 'mamae', label: 'Mamãe do BESS', short: 'Mamãe', image: 'img/characters/mamae.jpg', description: 'Advogada' },
-    { key: 'papai', label: 'Papai do BESS', short: 'Papai', image: 'img/characters/papai.jpg', description: 'Engenheiro' },
-    { key: 'amigo', label: 'Amigo do BESS', short: 'Amigo', image: 'img/characters/amigo.jpg', description: 'Caramelo brasileiro' }
+    { key: 'bess', label: 'BESS', short: 'BESS', image: 'img/characters/bess.jpg', poster: 'img/characters/bess-poster.jpg', description: 'O Lulu preto original' },
+    { key: 'mamae', label: 'Mamãe do BESS', short: 'Mamãe', image: 'img/characters/mamae.jpg', poster: 'img/characters/mamae-poster.jpg', description: 'Advogada' },
+    { key: 'papai', label: 'Papai do BESS', short: 'Papai', image: 'img/characters/papai.jpg', poster: 'img/characters/papai-poster.jpg', description: 'Engenheiro' },
+    { key: 'amigo', label: 'Amigo do BESS', short: 'Amigo', image: 'img/characters/amigo.jpg', poster: 'img/characters/amigo-poster.jpg', description: 'Caramelo brasileiro' }
   ];
   var DEFAULT_KEY = 'bess';
 
@@ -60,9 +61,34 @@
       class: cls,
       src: character.image,
       alt: character.label,
-      draggable: 'false',
-      decoding: 'async'
+      draggable: 'false'
     });
+  }
+
+  // options: { className } — classe extra no <img> (ex.: 'char-card__poster').
+  // Retorna a cena inteira do personagem; ver .hero-poster em css/components.css.
+  function buildPoster(key, options) {
+    var character = get(key);
+    options = options || {};
+    // Sem decoding="async": o pôster é o destaque da tela e deve aparecer
+    // junto com o resto (assíncrono deixava a moldura vazia por um instante).
+    return BessDoku.Dom.el('img', {
+      class: options.className || 'hero-poster__img',
+      src: character.poster,
+      alt: character.label,
+      draggable: 'false'
+    });
+  }
+
+  // Cartão-pôster pronto (moldura + imagem) para as telas de destaque.
+  // options: { small, celebrate, idle }
+  function buildHeroPoster(key, options) {
+    options = options || {};
+    var cls = 'hero-poster'
+      + (options.small ? ' hero-poster--sm' : '')
+      + (options.celebrate ? ' hero-poster--celebrate' : '')
+      + (options.idle ? ' hero-poster--idle' : '');
+    return BessDoku.Dom.el('div', { class: cls }, [buildPoster(key)]);
   }
 
   BessDoku.Characters = {
@@ -72,6 +98,8 @@
     isValidKey: isValidKey,
     getLast: getLast,
     setLast: setLast,
-    buildFigure: buildFigure
+    buildFigure: buildFigure,
+    buildPoster: buildPoster,
+    buildHeroPoster: buildHeroPoster
   };
 })(window.BessDoku);

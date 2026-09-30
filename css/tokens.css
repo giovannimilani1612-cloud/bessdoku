@@ -1,36 +1,67 @@
 /*
  * BESS Doku — tokens.css
- * Identidade visual: preto / branco / vermelho / cinza para a interface,
- * paleta pastel dessaturada apenas para as regiões do tabuleiro.
+ * Identidade visual "Pixar quente": creme com luz dourada, superfícies
+ * branco-creme, coral como acento de marca e marrom-escuro no lugar do preto.
+ * A paleta das regiões do tabuleiro é independente (legibilidade do jogo).
  */
+
+/* Nunito (variável, subconjunto latino, licença OFL) — auto-hospedada para
+   funcionar offline no app instalado. */
+@font-face {
+  font-family: "Nunito";
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url("../fonts/nunito-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 :root {
   /* Base */
-  --color-bg: #FAFAFA;
-  --color-surface: #FFFFFF;
-  --color-surface-alt: #F0F0F2;
-  --color-text-primary: #1A1A1E;
-  --color-text-secondary: #6B6B72;
-  --color-text-on-dark: #FAFAFA;
-  --color-border: #E3E3E7;
+  --color-bg: #FAF1E4;
+  --color-bg-glow: #FFE3BF;
+  --color-bg-glow-2: #FFD9CC;
+  --color-surface: #FFFCF7;
+  --color-surface-alt: #F6EBDC;
+  --color-surface-glass: rgba(255, 252, 247, 0.72);
+  --color-text-primary: #2A1F17;
+  --color-text-secondary: #8B7A69;
+  --color-text-on-dark: #FFF8EE;
+  --color-border: #EBDCC6;
 
-  --color-black: #111113;
-  --color-black-soft: #2E2E33;
-  --color-accent-red: #E63946;
-  --color-accent-red-dark: #C4283A;
-  --color-accent-red-soft: #FDE6E8;
-  --color-success: #2E9E5B;
-  --color-success-soft: #E4F6EC;
-  --color-gold: #E8AA2E;
+  /* "Preto" da marca vira marrom-escuro quente (nomes mantidos por compatibilidade). */
+  --color-black: #3B2A1F;
+  --color-black-soft: #55402F;
+  --color-black-deep: #2A1B12;
 
-  --gray-100: #F7F7F8;
-  --gray-200: #EDEDF0;
-  --gray-300: #DCDCE1;
-  --gray-400: #B9B9C2;
-  --gray-500: #8E8E98;
-  --gray-600: #6B6B72;
-  --gray-700: #4A4A50;
-  --gray-800: #2E2E33;
-  --gray-900: #1A1A1E;
+  --color-accent-red: #E8503E;
+  --color-accent-red-dark: #C93E2E;
+  --color-accent-red-light: #FF7A66;
+  --color-accent-red-soft: #FDE4DD;
+
+  --color-success: #3B9E5F;
+  --color-success-soft: #E3F5E8;
+  --color-gold: #F4B740;
+  --color-gold-dark: #D9971C;
+  --color-gold-soft: #FFF0C7;
+
+  /* Tons das bolhas dos ícones do menu */
+  --tone-coral: #E8503E;      --tone-coral-soft: #FDE4DD;
+  --tone-gold: #D9971C;       --tone-gold-soft: #FFF0C7;
+  --tone-sky: #2F8FD8;        --tone-sky-soft: #DDEEFB;
+  --tone-mint: #2E9C6A;       --tone-mint-soft: #DDF4E7;
+  --tone-lilac: #7B5BC7;      --tone-lilac-soft: #ECE4FA;
+  --tone-peach: #D9662A;      --tone-peach-soft: #FFE4D2;
+
+  --gray-100: #FBF7F1;
+  --gray-200: #F1E8DB;
+  --gray-300: #E2D5C3;
+  --gray-400: #C4B4A0;
+  --gray-500: #9C8B78;
+  --gray-600: #8B7A69;
+  --gray-700: #5F5044;
+  --gray-800: #3B2A1F;
+  --gray-900: #2A1F17;
 
   /* Paleta das regiões: 12 matizes espalhados pelo círculo cromático, em
      ordem tal que qualquer prefixo (4, 5 ... 9 primeiras cores, conforme o
@@ -63,30 +94,67 @@
   --space-7: 48px;
 
   /* Raio */
-  --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 22px;
+  --radius-sm: 12px;
+  --radius-md: 18px;
+  --radius-lg: 26px;
+  --radius-xl: 34px;
   --radius-pill: 999px;
 
-  /* Sombras */
-  --shadow-sm: 0 1px 2px rgba(17, 17, 19, 0.06);
-  --shadow-md: 0 4px 14px rgba(17, 17, 19, 0.09);
-  --shadow-lg: 0 14px 36px rgba(17, 17, 19, 0.16);
+  /* Sombras quentes, em camadas (luz vindo de cima) */
+  --shadow-color: 74, 46, 20;
+  --shadow-sm: 0 1px 2px rgba(var(--shadow-color), 0.06), 0 2px 6px rgba(var(--shadow-color), 0.05);
+  --shadow-md: 0 2px 4px rgba(var(--shadow-color), 0.05), 0 10px 24px rgba(var(--shadow-color), 0.10);
+  --shadow-lg: 0 6px 12px rgba(var(--shadow-color), 0.08), 0 24px 48px rgba(var(--shadow-color), 0.16);
+  --shadow-ring: inset 0 1px 0 rgba(255, 255, 255, 0.7);
 
   /* Tipografia */
-  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-family: "Nunito", ui-rounded, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 
   /* Transições */
   --ease-standard: cubic-bezier(.2, .8, .2, 1);
+  --ease-bounce: cubic-bezier(.34, 1.56, .64, 1);
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --color-bg: #121214;
-    --color-surface: #1C1C20;
-    --color-surface-alt: #232327;
-    --color-text-primary: #F5F5F7;
-    --color-text-secondary: #A7A7B0;
-    --color-border: #2E2E34;
+    --color-bg: #1C1613;
+    --color-bg-glow: #3A2A1C;
+    --color-bg-glow-2: #33201C;
+    --color-surface: #2A211B;
+    --color-surface-alt: #33291F;
+    --color-surface-glass: rgba(42, 33, 27, 0.72);
+    --color-text-primary: #F7EEE3;
+    --color-text-secondary: #B7A695;
+    --color-border: #43362B;
+
+    --color-black: #4A382B;
+    --color-black-soft: #5E4A3A;
+    --color-black-deep: #2A1B12;
+
+    --color-accent-red-soft: #4A2822;
+    --color-success-soft: #22392C;
+    --color-gold-soft: #4A3A1A;
+
+    --tone-coral-soft: #4A2822;
+    --tone-gold-soft: #4A3A1A;
+    --tone-sky-soft: #1F3347;
+    --tone-mint-soft: #1F3A2C;
+    --tone-lilac-soft: #33294A;
+    --tone-peach-soft: #47301F;
+    --tone-coral: #FF7A66;
+    --tone-gold: #F4B740;
+    --tone-sky: #7CC4F2;
+    --tone-mint: #7ED9A8;
+    --tone-lilac: #C8B4F0;
+    --tone-peach: #FFB07A;
+
+    --gray-300: #4A3B2E;
+    --gray-700: #CDBBA8;
+
+    --shadow-color: 0, 0, 0;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25), 0 2px 6px rgba(0, 0, 0, 0.2);
+    --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.25), 0 10px 24px rgba(0, 0, 0, 0.35);
+    --shadow-lg: 0 6px 12px rgba(0, 0, 0, 0.3), 0 24px 48px rgba(0, 0, 0, 0.5);
+    --shadow-ring: inset 0 1px 0 rgba(255, 255, 255, 0.06);
   }
 }

@@ -221,7 +221,7 @@
     var headline = winner === 'tie'
       ? 'Empate incrível! Os dois pensam como Lulus.'
       : 'AU-AU! ' + winnerName + ' (' + winnerCharacter + ') venceu!';
-    screen.appendChild(Dom.el('p', { class: 'text-center', style: 'font-weight:800;font-size:1.1rem;', text: headline }));
+    screen.appendChild(Dom.el('p', { class: 'text-center text-lg', text: headline }));
 
     var actions = Dom.el('div', { class: 'stack' }, [
       Dom.el('button', {

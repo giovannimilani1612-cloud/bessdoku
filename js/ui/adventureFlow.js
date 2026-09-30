@@ -72,9 +72,7 @@
       Dom.el('div', { style: 'width:46px' })
     ]));
 
-    screen.appendChild(Dom.el('div', { class: 'mascot-hero-wrap' }, [
-      Characters.buildFigure(Characters.DEFAULT_KEY, { size: 'lg' })
-    ]));
+    screen.appendChild(Characters.buildHeroPoster(Characters.DEFAULT_KEY, { small: true, idle: true }));
 
     screen.appendChild(Dom.el('h1', { class: 'text-center', text: 'Até onde você chega?' }));
     screen.appendChild(Dom.el('p', { class: 'text-center text-secondary', text: isTeam
@@ -89,7 +87,7 @@
       Dom.el('span', { class: 'rule-chip', text: '📈 Dificuldade sobe a cada ' + Adventure.PHASES_PER_TIER + ' fases' })
     ]));
 
-    screen.appendChild(Dom.el('p', { class: 'text-center', style: 'font-weight:700;', text: '🏆 ' + bestLine(run.mode) }));
+    screen.appendChild(Dom.el('p', { class: 'text-center text-strong', text: '🏆 ' + bestLine(run.mode) }));
 
     screen.appendChild(Dom.el('div', { class: 'stack' }, [
       Dom.el('button', {
@@ -194,7 +192,7 @@
       Dom.el('p', { class: 'text-small text-secondary', text: 'Próxima: Fase ' + run.phase + ' · ' + tierLine(nextTier) })
     ];
     if (isTeam) {
-      children.push(Dom.el('p', { style: 'font-weight:700;', text: 'Passe o aparelho para o ' + playerName(run, nextPlayer) + '.' }));
+      children.push(Dom.el('p', { class: 'text-strong', text: 'Passe o aparelho para o ' + playerName(run, nextPlayer) + '.' }));
     }
     children.push(Dom.el('button', {
       class: 'btn btn--primary btn--block',
@@ -231,13 +229,13 @@
     var screen = Dom.el('div', { class: 'screen screen--result container-scroll' });
 
     var heroKey = isTeam ? Characters.DEFAULT_KEY : Adventure.characterForPlayer(run, 1);
-    screen.appendChild(Dom.el('div', { class: 'mascot-hero-wrap' }, [Characters.buildFigure(heroKey, { size: 'lg' })]));
+    screen.appendChild(Characters.buildHeroPoster(heroKey, { small: true, celebrate: summary.isNewBest }));
     screen.appendChild(Dom.el('h1', { class: 'text-center', text: timeUp ? 'Tempo esgotado!' : 'Aventura encerrada' }));
     screen.appendChild(Dom.el('p', { class: 'text-center text-secondary', text: modeTitle(run) + ' · chegou à fase ' + summary.reachedPhase + ' · ' + tierLine(summary.reachedTier) }));
 
-    screen.appendChild(Dom.el('p', { class: 'text-center', style: 'font-weight:900;font-size:1.3rem;', text: summary.phasesWon + (summary.phasesWon === 1 ? ' fase vencida' : ' fases vencidas') }));
+    screen.appendChild(Dom.el('p', { class: 'text-center text-xl', text: summary.phasesWon + (summary.phasesWon === 1 ? ' fase vencida' : ' fases vencidas') }));
     if (summary.isNewBest) {
-      screen.appendChild(Dom.el('p', { class: 'text-center', style: 'color:var(--color-accent-red-dark);font-weight:800;', text: '🏆 Novo recorde!' }));
+      screen.appendChild(Dom.el('p', { class: 'text-center text-accent', text: '🏆 Novo recorde!' }));
     } else {
       screen.appendChild(Dom.el('p', { class: 'text-center text-small text-secondary', text: bestLine(run.mode) }));
     }

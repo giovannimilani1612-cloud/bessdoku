@@ -8,7 +8,6 @@
   var Dom = BessDoku.Dom;
   var Difficulty = BessDoku.Difficulty;
   var Timer = BessDoku.Timer;
-  var Characters = BessDoku.Characters;
   var Ranking = BessDoku.Ranking;
 
   var MODE_TITLES = {
@@ -33,12 +32,11 @@
 
     Difficulty.list().forEach(function (tier) {
       var best = bestTimes[tier.key];
-      var iconWrap = Dom.el('div', { class: 'diff-card__icon' }, [
-        Characters.buildFigure(Characters.DEFAULT_KEY, { size: 'sm' })
-      ]);
+      // Selo com o tamanho do tabuleiro; a cor sobe junto com o nível (CSS).
+      var iconWrap = Dom.el('div', { class: 'diff-card__icon', 'aria-hidden': 'true', text: tier.size + '×' + tier.size });
       var card = Dom.el('button', {
         type: 'button',
-        class: 'diff-card',
+        class: 'diff-card diff-card--' + tier.order,
         onClick: function () { handleSelect(mode, tier.key, router); }
       }, [
         iconWrap,

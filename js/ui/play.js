@@ -129,7 +129,8 @@
     screen.appendChild(topbar);
     screen.appendChild(hud);
     screen.appendChild(rulesCard);
-    screen.appendChild(Dom.el('div', { class: 'board-wrap' }, [boardView.el]));
+    // Moldura só visual em volta da grade (ver .board-frame em css/board.css).
+    screen.appendChild(Dom.el('div', { class: 'board-wrap' }, [Dom.el('div', { class: 'board-frame' }, [boardView.el])]));
     screen.appendChild(controlsHint);
     screen.appendChild(toolbar);
 
