@@ -20,7 +20,11 @@
   // `characterKey` (opcional) é o personagem escolhido pelo jogador (ver
   // game/characters.js); pode ser alterado depois via `session.character`,
   // desde que antes de a tela de jogo ser montada.
-  function createSession(puzzle, playerLabel, callbacks, resumeData, characterKey) {
+  // `options` (opcional) fixa penalidades para esta partida, ignorando as
+  // Configurações: { errorPenaltySeconds, hintPenaltySeconds }. Usado pelo
+  // modo Aventura; os demais modos não passam nada e seguem as Configurações.
+  function createSession(puzzle, playerLabel, callbacks, resumeData, characterKey, options) {
+    options = options || {};
     var board = Model.freshBoardState(puzzle, playerLabel);
     if (resumeData) {
       if (resumeData.marks) board.marks = resumeData.marks;
@@ -41,8 +45,27 @@
     }
 
     function start() {
-      board.startedAt = Date.now();
+      if (!board.startedAt) board.startedAt = Date.now();
       timer.start();
+    }
+
+    // Pausa o cronômetro (o tempo já decorrido fica acumulado). Um `start()`
+    // seguinte retoma de onde parou — é o que a tela de jogo faz ao ser
+    // montada de novo depois da tela de pausa da Aventura.
+    function pause() {
+      if (board.finished) return;
+      timer.stop();
+    }
+
+    function errorPenaltySeconds() {
+      if (typeof options.errorPenaltySeconds === 'number') return options.errorPenaltySeconds;
+      return Settings.get().errorPenaltySeconds || 0;
+    }
+
+    function hintPenaltySeconds() {
+      if (typeof options.hintPenaltySeconds === 'number') return options.hintPenaltySeconds;
+      var settings = Settings.get();
+      return settings.hintPenaltyEnabled ? (settings.hintPenaltySeconds || 0) : 0;
     }
 
     // Tempo REAL decorrido (sem penalidades). É o que o Desafio Diário salva
@@ -134,7 +157,7 @@
     function rejectPlacement(row, col, reason) {
       var prevMark = board.marks[row][col];
       board.errorCount++;
-      var penalty = Settings.get().errorPenaltySeconds || 0;
+      var penalty = errorPenaltySeconds();
       board.penaltySeconds += penalty;
       if (prevMark === Rules.EMPTY) {
         board.marks[row][col] = Rules.MARK_X;
@@ -178,13 +201,13 @@
       var hint = Hints.computeHint(puzzle, board.marks);
       if (!hint) return null;
       board.hintCount++;
-      var settings = Settings.get();
-      if (settings.hintPenaltyEnabled) {
-        board.penaltySeconds += settings.hintPenaltySeconds;
-      }
+      var penalty = hintPenaltySeconds();
+      board.penaltySeconds += penalty;
       lastHintCell = hint;
-      fire('hint', hint);
-      return hint;
+      // Cópia da dica com a penalidade cobrada, para a UI avisar o jogador.
+      var payload = Object.assign({}, hint, { penaltySeconds: penalty });
+      fire('hint', payload);
+      return payload;
     }
 
     function finish() {
@@ -221,6 +244,7 @@
       callbacks: cb,
       character: characterKey || (resumeData && resumeData.character) || BessDoku.Characters.DEFAULT_KEY,
       start: start,
+      pause: pause,
       interactCell: interactCell,
       paintX: paintX,
       undoRecentTap: undoRecentTap,

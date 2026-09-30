@@ -21,7 +21,15 @@
     return ENCOURAGE_LINES[Math.floor(Math.random() * ENCOURAGE_LINES.length)];
   }
 
-  // context: { title, subtitle, badge, showBack, onBack, onSolved(session) }
+  var LOW_TIME_MS = 30000;   // relógio fica vermelho e pulsa
+  var TICK_TIME_MS = 10000;  // um "tique" por segundo
+
+  // context: { title, subtitle, badge, showBack, onBack, onSolved(session, snapshot),
+  //            countdown }
+  // `countdown` (opcional, modo Aventura): { getRemainingMs(), onExpired(session) }.
+  // Com ele o HUD mostra o tempo RESTANTE em vez do decorrido, as penalidades
+  // aparecem como desconto ("−15s") e, ao chegar a zero, a partida é encerrada
+  // e `onExpired` é chamado.
   function render(session, context) {
     context = context || {};
     var puzzle = session.puzzle;
@@ -29,6 +37,10 @@
     var character = Characters.get(session.character);
     var name = character.short;
     var rafId = null;
+    var countdown = context.countdown || null;
+    var penaltySign = countdown ? '−' : '+';
+    var lastTickSecond = null;
+    var expired = false;
 
     var screen = Dom.el('div', { class: 'screen screen--play' });
 
@@ -53,7 +65,7 @@
 
     var hud = Dom.el('div', { class: 'hud' }, [
       Dom.el('div', { class: 'hud__col' }, [
-        Dom.el('span', { class: 'hud__label', text: 'Tempo' }),
+        Dom.el('span', { class: 'hud__label', text: countdown ? 'Restante' : 'Tempo' }),
         Dom.el('span', { class: 'hud__timer' }, [timerValueEl])
       ]),
       Dom.el('div', { class: 'hud__stats' }, [
@@ -86,6 +98,11 @@
         boardView.applyHintHighlight(hint);
         var myToken = ++hintToken;
         setTimeout(function () { if (myToken === hintToken) boardView.clearHintHighlight(); }, 3800);
+        if (hint.penaltySeconds) {
+          refreshTimer();
+          Dom.addTempClass(timerValueEl, 'hud__timer--penalty', 700);
+          Toast.show('Dica: ' + penaltySign + hint.penaltySeconds + 's');
+        }
       } else {
         Toast.show('Sem dicas lógicas agora — confie no seu raciocínio!');
       }
@@ -117,9 +134,37 @@
     screen.appendChild(toolbar);
 
     // O cronômetro exibido já inclui as penalidades: cada erro faz o relógio
-    // pular na hora (ver Session.getDisplayTimeMs).
+    // pular na hora (ver Session.getDisplayTimeMs). Na contagem regressiva,
+    // o restante é calculado por quem chamou (banco de tempo da Aventura).
+    function refreshTimer() {
+      if (!countdown) {
+        timerValueEl.textContent = Timer.format(session.getDisplayTimeMs());
+        return;
+      }
+      var remaining = Math.max(0, countdown.getRemainingMs());
+      timerValueEl.textContent = Timer.format(remaining);
+      timerValueEl.classList.toggle('hud__timer--low', remaining > 0 && remaining < LOW_TIME_MS);
+      if (remaining > 0 && remaining <= TICK_TIME_MS && !session.board.finished) {
+        var second = Math.ceil(remaining / 1000);
+        if (second !== lastTickSecond) {
+          lastTickSecond = second;
+          Sound.tick();
+        }
+      }
+      if (remaining <= 0 && !session.board.finished && !expired) {
+        expired = true;
+        session.finish();
+        timerValueEl.classList.remove('hud__timer--low');
+        Sound.timeUp();
+        Toast.show('Tempo esgotado!');
+        setTimeout(function () {
+          countdown.onExpired && countdown.onExpired(session);
+        }, 900);
+      }
+    }
+
     function tick() {
-      timerValueEl.textContent = Timer.format(session.getDisplayTimeMs());
+      refreshTimer();
       if (!session.board.finished) rafId = requestAnimationFrame(tick);
     }
 
@@ -140,17 +185,17 @@
         boardView.applyError(payload);
         Sound.error();
         errorsValueEl.textContent = String(session.board.errorCount);
-        timerValueEl.textContent = Timer.format(session.getDisplayTimeMs());
+        refreshTimer();
         Dom.addTempClass(timerValueEl, 'hud__timer--penalty', 700);
         var penalty = payload.penaltySeconds || 0;
-        Toast.show('Aqui não tem ' + name + '!' + (penalty ? ' +' + penalty + 's' : ''));
+        Toast.show('Aqui não tem ' + name + '!' + (penalty ? ' ' + penaltySign + penalty + 's' : ''));
       },
       regionComplete: function (payload) { boardView.applyRegionGlow(payload); },
       solved: function (resultSnapshot) {
         Sound.win();
         Toast.show('Desafio concluído!');
         Toast.burstConfetti(46);
-        timerValueEl.textContent = Timer.format(session.board.finalTimeMs);
+        refreshTimer();
         setTimeout(function () {
           context.onSolved && context.onSolved(session, resultSnapshot);
         }, 900);

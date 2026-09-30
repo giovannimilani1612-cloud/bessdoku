@@ -2,7 +2,7 @@
    Pré-cacheia todos os arquivos do jogo para funcionar offline.
    IMPORTANTE: ao alterar qualquer arquivo do jogo, aumente CACHE_NAME (v1 -> v2 ...)
    para que os jogadores recebam a versão nova. */
-var CACHE_NAME = 'bessdoku-v4';
+var CACHE_NAME = 'bessdoku-v5';
 
 var PRECACHE = [
   './',
@@ -43,6 +43,7 @@ var PRECACHE = [
   'js/game/dailyChallenge.js',
   'js/game/session.js',
   'js/game/duel.js',
+  'js/game/adventure.js',
   'js/ui/toast.js',
   'js/ui/board.js',
   'js/ui/screens.js',
@@ -52,6 +53,7 @@ var PRECACHE = [
   'js/ui/play.js',
   'js/ui/result.js',
   'js/ui/duelFlow.js',
+  'js/ui/adventureFlow.js',
   'js/ui/ranking.js',
   'js/ui/settingsScreen.js',
   'js/selfcheck/selfcheck.js',

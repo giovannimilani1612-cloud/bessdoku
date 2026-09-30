@@ -36,6 +36,8 @@
 
     var grid = Dom.el('div', { class: 'menu-grid' }, [
       tile({ icon: '🐾', label: 'Jogar', sub: 'Modo Solo', primary: true, onClick: function () { router.goDifficultySelect('solo'); } }),
+      tile({ icon: '🗺️', label: 'Aventura', sub: adventureSub('solo', 'Contra o relógio'), onClick: function () { router.startAdventure('solo'); } }),
+      tile({ icon: '🤝', label: 'Aventura em Dupla', sub: adventureSub('team', '2 jogadores, 1 relógio'), onClick: function () { router.startAdventure('team'); } }),
       tile({ icon: '⚔️', label: 'Duelo', sub: 'BESS Doku Duel', onClick: function () { router.goDifficultySelect('duel'); } }),
       tile({ icon: '🏆', label: 'Melhor de 3', sub: '2 jogadores', onClick: function () { router.goDifficultySelect('bo3'); } }),
       tile({ icon: '📅', label: 'Desafio Diário', sub: dailyDone ? 'Concluído hoje' : 'Novo hoje', dot: !dailyDone, onClick: function () { router.startDaily(); } }),
@@ -45,6 +47,17 @@
     screen.appendChild(grid);
 
     return screen;
+  }
+
+  // Legenda do tile da Aventura: recorde local (fases vencidas) ou o texto padrão.
+  function adventureSub(mode, fallback) {
+    try {
+      var best = BessDoku.Adventure && BessDoku.Adventure.getBest(mode);
+      if (best && best.bestPhasesWon > 0) {
+        return 'Recorde: ' + best.bestPhasesWon + (best.bestPhasesWon === 1 ? ' fase' : ' fases');
+      }
+    } catch (e) { /* sem recorde */ }
+    return fallback;
   }
 
   function isDailyDoneToday() {

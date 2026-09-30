@@ -1,8 +1,14 @@
 # BESS Doku
 
-Puzzle de lógica do Lulu da Pomerânia (estilo Star Battle): coloque um Lulu por linha, coluna e região, sem dois Lulus se tocarem. Modos Solo, Duelo local e Desafio Diário.
+Puzzle de lógica do Lulu da Pomerânia (estilo Star Battle): coloque um Lulu por linha, coluna e região, sem dois Lulus se tocarem. Modos Solo, Aventura (individual ou em dupla), Duelo local e Desafio Diário.
 
 Feito em HTML, CSS e JavaScript puros, sem servidor. Funciona offline como PWA.
+
+## Modo Aventura
+
+- Você começa com **2:00** no relógio; cada fase vencida devolve o tempo que sobrou e soma **+2:00**.
+- Erro custa **−15 s** e dica custa **−20 s**. A dificuldade sobe a cada 2 fases (4x4 → 5x5 → … → 9x9).
+- **Em dupla**: os dois jogadores se revezam a cada fase no mesmo aparelho, com um único relógio. A pontuação é o número de fases vencidas; o recorde fica salvo no aparelho, separado por modo.
 
 ## Como jogar
 

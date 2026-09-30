@@ -72,6 +72,14 @@
         { freq: 1319, duration: 0.32 }
       ]);
     },
-    hint: function () { tone(880, 0.1, { type: 'sine', volume: 0.1 }); }
+    hint: function () { tone(880, 0.1, { type: 'sine', volume: 0.1 }); },
+    // Aventura: "tique" dos últimos segundos e o fim do tempo.
+    tick: function () { tone(880, 0.05, { type: 'square', volume: 0.06 }); },
+    timeUp: function () {
+      sequence([
+        { freq: 523, duration: 0.16 }, { freq: 392, duration: 0.16 },
+        { freq: 262, duration: 0.42 }
+      ]);
+    }
   };
 })(window.BessDoku);

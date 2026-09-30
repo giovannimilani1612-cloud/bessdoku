@@ -241,6 +241,7 @@
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-3);
 }
+.stat-grid--two { grid-template-columns: 1fr 1fr; }
 .stat-box {
   background: var(--color-surface-alt);
   border-radius: var(--radius-md);
@@ -448,4 +449,20 @@
 .hud__timer--penalty {
   color: var(--color-accent-red);
   animation: bd-penalty-pop .7s var(--ease-standard);
+}
+
+/* ---------- Aventura (contagem regressiva) ---------- */
+/* Últimos 30 segundos: relógio vermelho pulsando. */
+.hud__timer--low {
+  color: var(--color-accent-red);
+  animation: bd-timer-pulse 1s ease-in-out infinite;
+}
+/* Bônus "+02:00" da tela de fase vencida. */
+.adventure-bonus {
+  font-size: 2.4rem;
+  font-weight: 900;
+  letter-spacing: -.02em;
+  color: var(--color-success);
+  font-variant-numeric: tabular-nums;
+  animation: bd-pop-in .5s var(--ease-standard);
 }

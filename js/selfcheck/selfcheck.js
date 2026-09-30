@@ -306,6 +306,126 @@
     });
   }
 
+  function fixturePuzzle(id) {
+    // Mesmo fixture 4x4: solução (0,2) (1,0) (2,3) (3,1).
+    return {
+      id: id, size: 4,
+      regions: [[1, 1, 0, 0], [1, 1, 0, 0], [3, 3, 2, 2], [3, 3, 2, 2]],
+      solution: [2, 0, 3, 1],
+      difficultyTier: BessDoku.Difficulty.list()[0].key
+    };
+  }
+
+  function busyWait(ms) {
+    var until = performance.now() + ms;
+    while (performance.now() < until) { /* espera ativa curta, só no autoteste */ }
+  }
+
+  function runAdventureChecks() {
+    var A = BessDoku.Adventure;
+    var tiers = BessDoku.Difficulty.list();
+
+    // Escada de dificuldade: 2 fases por nível, Extremo para sempre.
+    check('aventura: fase 1 é Iniciante', A.tierForPhase(1).key === 'iniciante');
+    check('aventura: fase 2 é Iniciante', A.tierForPhase(2).key === 'iniciante');
+    check('aventura: fase 3 é Fácil', A.tierForPhase(3).key === 'facil');
+    check('aventura: fase 10 é Muito Difícil', A.tierForPhase(10).key === 'muitoDificil');
+    check('aventura: fase 11 é Extremo', A.tierForPhase(11).key === 'extremo');
+    check('aventura: fase 50 continua Extremo', A.tierForPhase(50).key === tiers[tiers.length - 1].key);
+
+    // Sessão com penalidades fixas (ignora as Configurações).
+    var hintEvents = [];
+    var s = BessDoku.Session.create(fixturePuzzle('selfcheck-adv-penalty'), 'p1', {
+      hint: function (p) { hintEvents.push(p); }
+    }, null, 'bess', { errorPenaltySeconds: 15, hintPenaltySeconds: 20 });
+    s.start();
+    s.interactCell(0, 0, true);
+    check('aventura: erro custa 15 s fixos', s.board.penaltySeconds === 15, 'penalty=' + s.board.penaltySeconds);
+    var hint = s.useHint();
+    check('aventura: dica custa 20 s fixos', s.board.penaltySeconds === 35, 'penalty=' + s.board.penaltySeconds);
+    check('aventura: dica devolve penaltySeconds', !!hint && hint.penaltySeconds === 20);
+    check('aventura: callback hint recebe penaltySeconds', hintEvents.length === 1 && hintEvents[0].penaltySeconds === 20);
+
+    // Sessão sem opções continua usando as Configurações (regressão).
+    var s2 = BessDoku.Session.create(fixturePuzzle('selfcheck-adv-settings'), 'solo', {}, null, 'bess');
+    s2.start();
+    s2.interactCell(0, 0, true);
+    check('sessão: sem opções usa a penalidade das Configurações', s2.board.penaltySeconds === BessDoku.Settings.get().errorPenaltySeconds);
+    var hintPenaltyExpected = BessDoku.Settings.get().hintPenaltyEnabled ? BessDoku.Settings.get().hintPenaltySeconds : 0;
+    var h2 = s2.useHint();
+    check('sessão: sem opções a dica segue as Configurações', !!h2 && h2.penaltySeconds === hintPenaltyExpected, 'penalty=' + (h2 && h2.penaltySeconds));
+
+    // Pausa: o intervalo pausado não conta.
+    var s3 = BessDoku.Session.create(fixturePuzzle('selfcheck-adv-pause'), 'p1', {}, null, 'bess');
+    s3.start();
+    busyWait(15);
+    s3.pause();
+    var pausedAt = s3.getLiveElapsedMs();
+    busyWait(30);
+    check('sessão: pausada não avança', s3.getLiveElapsedMs() === pausedAt, 'antes=' + pausedAt + ' depois=' + s3.getLiveElapsedMs());
+    s3.start();
+    busyWait(5);
+    var resumed = s3.getLiveElapsedMs();
+    check('sessão: retomar continua de onde parou', resumed >= pausedAt && resumed < pausedAt + 25, 'pausedAt=' + pausedAt + ' resumed=' + resumed);
+
+    // Banco de tempo numa corrida individual.
+    var run = A.createRun('solo');
+    check('aventura: corrida começa com 2:00', run.bankMs === 120000 && run.phase === 1);
+    check('aventura: sem sessão, restante = banco', A.getRemainingMs(run) === 120000);
+    run.characters.p1 = 'mamae';
+    run.puzzle = fixturePuzzle('selfcheck-adv-run');
+    var session = A.beginPhase(run, {});
+    check('aventura: sessão da fase usa o personagem do jogador', session.character === 'mamae');
+    check('aventura: status playing', run.status === 'playing');
+    session.start();
+    session.interactCell(0, 0, true); // erro: -15 s
+    check('aventura: erro desconta do restante', A.getRemainingMs(run) <= 120000 - 15000);
+    session.interactCell(0, 2, true);
+    session.interactCell(1, 0, true);
+    session.interactCell(2, 3, true);
+    session.interactCell(3, 1, true);
+    check('aventura: fase resolvida', session.board.finished === true);
+    var finalMs = session.board.finalTimeMs;
+    A.phaseSolved(run);
+    check('aventura: banco = restante + 2:00', run.bankMs === (120000 - finalMs) + 120000, 'bank=' + run.bankMs + ' final=' + finalMs);
+    check('aventura: avança para a fase 2', run.phase === 2 && run.status === 'transition');
+    check('aventura: resultado da fase registrado', run.phaseResults.length === 1 && run.phaseResults[0].player === 1 && run.phaseResults[0].errorCount === 1);
+
+    // Tempo esgotado na fase seguinte.
+    run.puzzle = fixturePuzzle('selfcheck-adv-run-2');
+    var session2 = A.beginPhase(run, {});
+    session2.start();
+    A.timeUp(run);
+    check('aventura: timeUp encerra a sessão e a corrida', session2.board.finished === true && run.status === 'over' && run.endReason === 'timeUp');
+
+    // Resumo + recorde (limpa o recorde no fim para não sujar o aparelho).
+    var savedRecords = BessDoku.Storage.get('adventure', null);
+    try {
+      A.clearRecords();
+      var summary = A.finishRun(run);
+      check('aventura: resumo conta 1 fase vencida', summary.phasesWon === 1 && summary.reachedPhase === 2);
+      check('aventura: resumo soma erros da fase perdida', summary.totalErrors === 1);
+      check('aventura: primeira corrida é recorde', summary.isNewBest === true);
+      check('aventura: recorde salvo por modo', A.getBest('solo').bestPhasesWon === 1 && A.getBest('team') === null);
+      check('aventura: recorde menor não substitui', A.submitBest('solo', 0).isNewBest === false && A.getBest('solo').bestPhasesWon === 1);
+      check('aventura: recorde maior substitui', A.submitBest('solo', 3).isNewBest === true && A.getBest('solo').bestPhasesWon === 3);
+      check('aventura: recorde da dupla é separado', A.submitBest('team', 2).isNewBest === true && A.getBest('solo').bestPhasesWon === 3);
+    } finally {
+      if (savedRecords) BessDoku.Storage.set('adventure', savedRecords);
+      else A.clearRecords();
+    }
+
+    // Dupla: revezamento por fase.
+    var team = A.createRun('team');
+    team.characters = { p1: 'bess', p2: 'papai' };
+    var order = [];
+    for (var ph = 1; ph <= 4; ph++) { team.phase = ph; order.push(A.currentPlayer(team)); }
+    check('aventura: dupla alterna 1,2,1,2', order.join(',') === '1,2,1,2', order.join(','));
+    team.phase = 2;
+    check('aventura: personagem do jogador 2 na fase 2', A.characterForPlayer(team, A.currentPlayer(team)) === 'papai');
+    check('aventura: solo é sempre o jogador 1', A.currentPlayer(run) === 1);
+  }
+
   function renderReport() {
     var passCount = results.filter(function (r) { return r.pass; }).length;
     var failCount = results.length - passCount;
@@ -335,6 +455,7 @@
     runSessionChecks();
     runBoardGestureChecks();
     runCharacterChecks();
+    runAdventureChecks();
     runSolverChecks();
     runGeneratorChecks();
     renderReport();

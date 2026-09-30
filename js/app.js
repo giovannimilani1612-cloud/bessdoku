@@ -176,7 +176,10 @@
       startSolo: function (tierKey) { startSolo(tierKey, Router); },
       startDaily: function () { startDailySession(Router); },
       startDuel: function (tierKey) { BessDoku.DuelFlow.start(tierKey, 1, Router); },
-      startBestOf3: function (tierKey) { BessDoku.DuelFlow.start(tierKey, 3, Router); }
+      startBestOf3: function (tierKey) { BessDoku.DuelFlow.start(tierKey, 3, Router); },
+      // mode: 'solo' | 'team' (a progressão de dificuldade é fixa; não passa
+      // pela seleção de dificuldade).
+      startAdventure: function (mode) { BessDoku.AdventureFlow.start(mode, Router); }
     };
 
     Router.goHome();
